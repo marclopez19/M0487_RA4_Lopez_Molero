@@ -2,12 +2,13 @@ import sqlite3
 import os
 import datetime
 
-# Ruta absoluta al mateix directori que l'script
+# Ruta absoluta al directori de l'script
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_NAME = os.path.join(BASE_DIR, "grups_musica.db")
 
 
 def crear_taula():
+    """Crea la taula 'grups' si no existeix a la base de dades."""
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     cursor.execute('''
@@ -64,6 +65,7 @@ def intro_dades(nom=None):
 
 
 def afegir_grup():
+    """Afegeix un nou grup a la base de dades."""
     try:
         dades = intro_dades()
         conn = sqlite3.connect(DB_NAME)
@@ -81,6 +83,7 @@ def afegir_grup():
 
 
 def mostrar_grups():
+    """Llista tots els grups emmagatzemats a la base de dades."""
     try:
         conn = sqlite3.connect(DB_NAME)
         cursor = conn.cursor()
@@ -98,7 +101,26 @@ def mostrar_grups():
         print(f"❌ Error en mostrar els grups: {e}")
 
 
+def consultar_grup_per_nom(nom_grup):
+    """Consulta un grup pel seu nom i mostra les dades si existeix."""
+    try:
+        conn = sqlite3.connect(DB_NAME)
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM grups WHERE nom_grup = ?', (nom_grup,))
+        grup = cursor.fetchone()
+        conn.close()
+
+        if grup:
+            print("\n🔍 Grup trobat:")
+            print(f"ID: {grup[0]}, Nom: {grup[1]}, Any inici: {grup[2]}, Tipus: {grup[3]}, Integrants: {grup[4]}")
+        else:
+            print("⚠️ No s'ha trobat cap grup amb aquest nom.")
+    except Exception as e:
+        print(f"❌ Error en consultar el grup: {e}")
+
+
 def eliminar_grup(nom_grup):
+    """Elimina un grup pel seu nom."""
     try:
         conn = sqlite3.connect(DB_NAME)
         cursor = conn.cursor()
@@ -112,6 +134,7 @@ def eliminar_grup(nom_grup):
 
 
 def actualitzar_grup(nom_grup):
+    """Actualitza les dades d'un grup pel seu nom."""
     try:
         conn = sqlite3.connect(DB_NAME)
         cursor = conn.cursor()
@@ -138,6 +161,7 @@ def actualitzar_grup(nom_grup):
 
 
 def menu():
+    """Mostra el menú principal i gestiona les opcions."""
     crear_taula()
     while True:
         print("###################################################################")
@@ -146,8 +170,9 @@ def menu():
         print("\n--- Menú ---")
         print("1. Afegir un nou grup de música en català")
         print("2. Mostrar tots els grups de música en català")
-        print("3. Eliminar un grup de música")
-        print("4. Actualitzar un grup de música")
+        print("3. Consultar un grup pel seu nom")
+        print("4. Eliminar un grup de música")
+        print("5. Actualitzar un grup de música")
         print("0. Sortir")
         opcio = input("Tria una opció: ")
 
@@ -156,9 +181,12 @@ def menu():
         elif opcio == "2":
             mostrar_grups()
         elif opcio == "3":
+            nom = input("Nom del grup a consultar: ")
+            consultar_grup_per_nom(nom)
+        elif opcio == "4":
             nom = input("Nom del grup a eliminar: ")
             eliminar_grup(nom)
-        elif opcio == "4":
+        elif opcio == "5":
             nom = input("Nom del grup a actualitzar: ")
             actualitzar_grup(nom)
         elif opcio == "0":
