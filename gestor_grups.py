@@ -26,27 +26,39 @@ def crear_taula():
 def intro_dades(nom=None):
     """
     Intoducció de dades per a un grup musical.
+    Permet reutilitzar per afegir o actualitzar.
+    Fa validacions per assegurar entrades correctes.
     """
     if nom:
         nom_grup = nom
     else:
-        nom_grup = input("Nom del grup: ").strip()
-        if not nom_grup:
-            raise ValueError("El nom no pot estar buit.")
+        while True:
+            nom_grup = input("Nom del grup: ").strip()
+            if nom_grup:
+                break
+            print("⚠️ El nom no pot estar buit.")
 
-    any_inici = input("Any d'inici (≥ 1960): ").strip()
-    if not any_inici.isdigit() or int(any_inici) < 1960:
-        raise ValueError("L'any ha de ser un enter igual o superior a 1960.")
-    any_inici = int(any_inici)
+    while True:
+        any_inici_input = input("Any d'inici (≥ 1960): ").strip()
+        if any_inici_input.isdigit():
+            any_inici = int(any_inici_input)
+            if any_inici >= 1960:
+                break
+        print("⚠️ L'any ha de ser un enter igual o superior a 1960.")
 
-    tipus = input("Tipus de música: ").strip()
-    if not tipus or any(char.isdigit() for char in tipus):
-        raise ValueError("El tipus de música no pot estar buit ni contenir números.")
+    while True:
+        tipus = input("Tipus de música: ").strip()
+        if tipus and not any(char.isdigit() for char in tipus):
+            break
+        print("⚠️ El tipus de música no pot estar buit ni contenir números.")
 
-    integrants = input("Nombre d'integrants (> 0): ").strip()
-    if not integrants.isdigit() or int(integrants) <= 0:
-        raise ValueError("El nombre d'integrants ha de ser un enter positiu.")
-    integrants = int(integrants)
+    while True:
+        integrants_input = input("Nombre d'integrants (> 0): ").strip()
+        if integrants_input.isdigit():
+            integrants = int(integrants_input)
+            if integrants > 0:
+                break
+        print("⚠️ El nombre d'integrants ha de ser un enter positiu.")
 
     return nom_grup, any_inici, tipus, integrants
 
@@ -61,9 +73,9 @@ def afegir_grup():
             VALUES (?, ?, ?, ?)
         ''', dades)
         conn.commit()
-        print(f"Grup '{dades[0]}' afegit correctament.")
+        print(f"✅ Grup '{dades[0]}' afegit correctament.")
     except Exception as e:
-        print(f"Error al afegir el grup: {e}")
+        print(f"❌ Error al afegir el grup: {e}")
     finally:
         conn.close()
 
@@ -77,13 +89,13 @@ def mostrar_grups():
         conn.close()
 
         if grups:
-            print("\nLlista de grups:")
+            print("\n📄 Llista de grups:")
             for grup in grups:
                 print(f"ID: {grup[0]}, Nom: {grup[1]}, Any inici: {grup[2]}, Tipus: {grup[3]}, Integrants: {grup[4]}")
         else:
-            print("\nNo hi ha grups a la base de dades.")
+            print("\n📭 No hi ha grups a la base de dades.")
     except Exception as e:
-        print(f"Error en mostrar els grups: {e}")
+        print(f"❌ Error en mostrar els grups: {e}")
 
 
 def eliminar_grup(nom_grup):
@@ -92,9 +104,9 @@ def eliminar_grup(nom_grup):
         cursor = conn.cursor()
         cursor.execute('DELETE FROM grups WHERE nom_grup = ?', (nom_grup,))
         conn.commit()
-        print(f"Grup '{nom_grup}' eliminat correctament.")
+        print(f"🗑️ Grup '{nom_grup}' eliminat correctament.")
     except sqlite3.Error as e:
-        print(f"Error al eliminar el grup: {e}")
+        print(f"❌ Error al eliminar el grup: {e}")
     finally:
         conn.close()
 
@@ -108,7 +120,7 @@ def actualitzar_grup(nom_grup):
         grup = cursor.fetchone()
 
         if grup:
-            print(f"Grup trobat: {grup}")
+            print(f"✏️ Grup trobat: {grup}")
             dades = intro_dades(nom_grup)
             cursor.execute('''
                 UPDATE grups
@@ -116,11 +128,11 @@ def actualitzar_grup(nom_grup):
                 WHERE nom_grup = ?
             ''', (*dades, nom_grup))
             conn.commit()
-            print(f"Grup '{nom_grup}' actualitzat correctament.")
+            print(f"✅ Grup '{nom_grup}' actualitzat correctament.")
         else:
-            print("No s'ha trobat cap grup amb aquest nom.")
+            print("⚠️ No s'ha trobat cap grup amb aquest nom.")
     except Exception as e:
-        print(f"Error al actualitzar el grup: {e}")
+        print(f"❌ Error al actualitzar el grup: {e}")
     finally:
         conn.close()
 
@@ -150,10 +162,10 @@ def menu():
             nom = input("Nom del grup a actualitzar: ")
             actualitzar_grup(nom)
         elif opcio == "0":
-            print("Adéu!")
+            print("👋 Adéu!")
             break
         else:
-            print("Opció no vàlida. Torna-ho a provar.")
+            print("❌ Opció no vàlida. Torna-ho a provar.")
 
 
 if __name__ == "__main__":
