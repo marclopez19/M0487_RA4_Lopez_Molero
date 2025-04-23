@@ -7,21 +7,35 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_NAME = os.path.join(BASE_DIR, "grups_musica.db")
 
 
+DB_NAME = "grups_musica.db"
+
+def configurar_bd(nombre_bd: str):
+    """Configura el nombre de la base de datos (para testing)"""
+    global DB_NAME
+    DB_NAME = nombre_bd
+
 def crear_taula():
-    """Crea la taula 'grups' si no existeix a la base de dades."""
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS grups (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nom_grup TEXT NOT NULL,
-            any_inici INTEGER,
-            tipus_musica TEXT,
-            num_integrants INTEGER
-        )
-    ''')
-    conn.commit()
-    conn.close()
+    """Crea la tabla si no existe (versión mejorada para testing)"""
+    try:
+        conn = sqlite3.connect(DB_NAME)
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS grups (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nom_grup TEXT NOT NULL,
+                any_inici INTEGER,
+                tipus_musica TEXT,
+                num_integrants INTEGER
+            )
+        ''')
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Error creando tabla: {e}")
+        return False
+    finally:
+        conn.close()
+
 
 
 def intro_dades(nom=None):
