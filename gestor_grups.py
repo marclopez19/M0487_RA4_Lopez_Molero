@@ -5,9 +5,11 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_NAME = os.path.join(BASE_DIR, "grups_musica.db")
 
+
 def configurar_bd(nombre_bd: str):
     global DB_NAME
     DB_NAME = nombre_bd
+
 
 def crear_taula():
     try:
@@ -24,36 +26,38 @@ def crear_taula():
         ''')
         conn.commit()
     except Exception as e:
-        print(f"Error creant taula: {e}")
+        print(f"⚠️ Error creant taula: {e}")
     finally:
         conn.close()
+
 
 def intro_dades(nom=None, any_inici=None, tipus=None, integrants=None):
     if nom is None:
         nom = input("Nom del grup: ").strip()
     if not nom:
-        raise ValueError("El nom no pot estar buit.")
+        raise ValueError("❌ El nom no pot estar buit.")
 
     if any_inici is None:
         any_inici_input = input("Any d'inici (≥ 1960): ").strip()
         if any_inici_input.isdigit():
             any_inici = int(any_inici_input)
     if not isinstance(any_inici, int) or any_inici < 1960:
-        raise ValueError("L'any ha de ser un enter igual o superior a 1960.")
+        raise ValueError("❌ L'any ha de ser un enter igual o superior a 1960.")
 
     if tipus is None:
         tipus = input("Tipus de música: ").strip()
     if not tipus or any(char.isdigit() for char in tipus):
-        raise ValueError("El tipus de música no pot estar buit ni contenir números.")
+        raise ValueError("❌ El tipus de música no pot estar buit ni contenir números.")
 
     if integrants is None:
         integrants_input = input("Nombre d'integrants (> 0): ").strip()
         if integrants_input.isdigit():
             integrants = int(integrants_input)
     if not isinstance(integrants, int) or integrants <= 0:
-        raise ValueError("El nombre d'integrants ha de ser un enter positiu.")
+        raise ValueError("❌ El nombre d'integrants ha de ser un enter positiu.")
 
     return nom, any_inici, tipus, integrants
+
 
 def afegir_grup():
     try:
@@ -65,11 +69,12 @@ def afegir_grup():
             VALUES (?, ?, ?, ?)
         ''', dades)
         conn.commit()
-        print(f"Grup '{dades[0]}' afegit correctament.")
+        print(f"✅ Grup '{dades[0]}' afegit correctament.")
     except Exception as e:
-        print(f"Error al afegir el grup: {e}")
+        print(f"⚠️ Error al afegir el grup: {e}")
     finally:
         conn.close()
+
 
 def mostrar_grups():
     try:
@@ -80,13 +85,14 @@ def mostrar_grups():
         conn.close()
 
         if grups:
-            print("\n Llista de grups:")
+            print("\n📃 Llista de grups:")
             for grup in grups:
                 print(f"ID: {grup[0]}, Nom: {grup[1]}, Any inici: {grup[2]}, Tipus: {grup[3]}, Integrants: {grup[4]}")
         else:
-            print("\n No hi ha grups a la base de dades.")
+            print("\nℹ️ No hi ha grups a la base de dades.")
     except Exception as e:
-        print(f" Error en mostrar els grups: {e}")
+        print(f"⚠️ Error en mostrar els grups: {e}")
+
 
 def consultar_grup_per_nom(nom_grup):
     try:
@@ -97,12 +103,13 @@ def consultar_grup_per_nom(nom_grup):
         conn.close()
 
         if grup:
-            print("Grup trobat:")
+            print("🔍 Grup trobat:")
             print(f"ID: {grup[0]}, Nom: {grup[1]}, Any inici: {grup[2]}, Tipus: {grup[3]}, Integrants: {grup[4]}")
         else:
-            print("No s'ha trobat cap grup amb aquest nom.")
+            print("❌ No s'ha trobat cap grup amb aquest nom.")
     except Exception as e:
-        print(f"Error en consultar el grup: {e}")
+        print(f"⚠️ Error en consultar el grup: {e}")
+
 
 def eliminar_grup(nom_grup):
     try:
@@ -110,11 +117,12 @@ def eliminar_grup(nom_grup):
         cursor = conn.cursor()
         cursor.execute('DELETE FROM grups WHERE nom_grup = ?', (nom_grup,))
         conn.commit()
-        print(f"Grup '{nom_grup}' eliminat correctament.")
+        print(f"🗑️ Grup '{nom_grup}' eliminat correctament.")
     except sqlite3.Error as e:
-        print(f"Error al eliminar el grup: {e}")
+        print(f"⚠️ Error al eliminar el grup: {e}")
     finally:
         conn.close()
+
 
 def actualitzar_grup(nom_grup):
     try:
@@ -125,7 +133,8 @@ def actualitzar_grup(nom_grup):
         grup = cursor.fetchone()
 
         if grup:
-            print(f"Grup trobat: {grup}")
+            print("🔍 Grup trobat:")
+            print(f"ID: {grup[0]}, Nom: {grup[1]}, Any inici: {grup[2]}, Tipus: {grup[3]}, Integrants: {grup[4]}")
             dades = intro_dades(nom_grup)
             cursor.execute('''
                 UPDATE grups
@@ -133,21 +142,22 @@ def actualitzar_grup(nom_grup):
                 WHERE nom_grup = ?
             ''', (*dades, nom_grup))
             conn.commit()
-            print(f"Grup '{nom_grup}' actualitzat correctament.")
+            print(f"🔄 Grup '{nom_grup}' actualitzat correctament.")
         else:
-            print("No s'ha trobat cap grup amb aquest nom.")
+            print("❌ No s'ha trobat cap grup amb aquest nom.")
     except Exception as e:
-        print(f"Error al actualitzar el grup: {e}")
+        print(f"⚠️ Error al actualitzar el grup: {e}")
     finally:
         conn.close()
+
 
 def menu():
     """Mostra el menú principal i gestiona les opcions."""
     crear_taula()
     while True:
-        print("###################################################################")
-        print("#################### GRUPS DE MÚSICA en CATALÀ ####################")
-        print("###################################################################")
+        print("\n" + "#" * 67)
+        print("################### GRUPS DE MÚSICA en CATALÀ ###################")
+        print("#" * 67)
         print("\n--- Menú ---")
         print("1. Afegir un nou grup de música en català")
         print("2. Mostrar tots els grups de música en català")
@@ -171,10 +181,11 @@ def menu():
             nom = input("Nom del grup a actualitzar: ")
             actualitzar_grup(nom)
         elif opcio == "0":
-            print("Adéu!")
+            print("👋 Adéu!")
             break
         else:
-            print("Opció no vàlida. Torna-ho a provar.")
+            print("❌ Opció no vàlida. Torna-ho a provar.")
+
 
 if __name__ == "__main__":
     menu()

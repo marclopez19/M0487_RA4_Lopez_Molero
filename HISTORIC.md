@@ -17,12 +17,7 @@ Hem creat el projecte al GitHub anomenat `M0487_RA4_Lopez_Molero`, on a l’arxi
 ## PRIMERA PART – CREEM L’ESTRUCTURA DEL PROJECTE
 
 **Data:** 2025-04-23  
-<<<<<<< HEAD
 **Responsable:** MARC LOPEZ CESC MOLERO  
-**Responsable:** MARC LOPEZ CESC MOLERO  
-=======
-**Responsables:** MARC LÓPEZ, CESC MOLERO  
->>>>>>> 22119f6 (Corregeix aquest últim commit amb el HISTORIC.md finalitzat i la solució de tots els errors.)
 **Canvis realitzats:**
 - Hem creat els arxius `gestor_grups.py`, `grups_musica.db`, `README.md`, `test_grups.py`.
 
@@ -38,12 +33,7 @@ S’ha implementat la funcionalitat de consultar grups dins de l’arxiu `gestor
 
 ---
 
-<<<<<<< HEAD
 ## TERCERA PART – CREAR EL ARXIU TEST_GRUPS.PY
-## TERCERA PART – CREAR EL ARXIU TEST_GRUPS.PY
-=======
-## TERCERA PART – CREEM L’ARXIU `test_grups.py`
->>>>>>> 22119f6 (Corregeix aquest últim commit amb el HISTORIC.md finalitzat i la solució de tots els errors.)
 
 **Data:** 2025-04-23  
 **Responsables:** MARC LÓPEZ, CESC MOLERO  
